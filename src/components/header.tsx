@@ -7,7 +7,9 @@ export function Header() {
 
   return (
     <div className=" flex flex-row items-center justify-between">
-      <text>Rohit Tokala</text>
+      <Link href={"/"} className=" text-xl">
+        Rohit Tokala
+      </Link>
       <ul className=" flex flex-row items-center gap-3 text-primary">
         <li>
           <Link
@@ -51,10 +53,10 @@ export function Header() {
         </li>
         <li>
           <Link
-            className={` rounded-xl border border-primary bg-primary p-2 hover:bg-shadow hover:text-primary ${
+            className={` rounded-xl border border-primary p-2 hover:bg-shadow hover:text-primary ${
               currentRoute === "/contact"
-                ? "border bg-shadow font-medium text-primary"
-                : "text-white"
+                ? "border bg-shadow font-medium "
+                : "bg-primary text-white "
             }`}
             href={"/contact"}
           >
