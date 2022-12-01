@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <div>
+    <div className=" fixed bottom-3">
       <text>Footer</text>
     </div>
   );
