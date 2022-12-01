@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        Expletus: ["Expletus Sans", "sans"],
+      },
+    },
     colors: {
       primary: "#010201",
       background: "#f1e7e1",
