@@ -18,17 +18,19 @@ export function Header() {
           rel="stylesheet"
         />
       </Head>
-      <div className=" flex flex-row items-center justify-between">
-        <Link href={"/"} className=" font-Expletus text-xl">
+      <header className=" sticky top-0 mb-5 flex flex-row items-center justify-between bg-background p-4">
+        <Link href={"/"} className=" font-Expletus text-2xl">
           Rohit Tokala
         </Link>
         <ul className=" flex flex-row items-center gap-3 text-primary">
           <li>
             <Link
               className={` rounded-xl p-2 hover:bg-shadow  ${
-                currentRoute === "/" ? `border bg-shadow font-medium` : ""
+                currentRoute === "/" || currentRoute === "#home"
+                  ? `border bg-shadow font-medium`
+                  : ""
               }`}
-              href="/"
+              href="#home"
             >
               Home
             </Link>
@@ -36,9 +38,9 @@ export function Header() {
           <li>
             <Link
               className={` rounded-xl p-2 hover:bg-shadow ${
-                currentRoute === "/about" ? `border bg-shadow font-medium` : ""
+                currentRoute === "/#about" ? `border bg-shadow font-medium` : ""
               }`}
-              href="/about"
+              href="#about"
             >
               About
             </Link>
@@ -46,16 +48,16 @@ export function Header() {
           <li>
             <Link
               className={` rounded-xl p-2 hover:bg-shadow ${
-                currentRoute === "/projects"
+                currentRoute === "#projects"
                   ? `border bg-shadow font-medium`
                   : ""
               }`}
-              href={"/projects"}
+              href={"#projects"}
             >
               Projects
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className={` rounded-xl p-2 hover:bg-shadow  ${
                 currentRoute === "/resume" ? `border bg-shadow font-medium` : ""
@@ -64,21 +66,23 @@ export function Header() {
             >
               Resume
             </Link>
-          </li>
+          </li> */}
+        </ul>
+        <ul className=" flex flex-row items-center gap-3 text-primary">
           <li>
             <Link
               className={` rounded-xl border border-primary p-2 hover:bg-shadow hover:text-primary ${
-                currentRoute === "/contact"
+                currentRoute === "#contact"
                   ? "border bg-shadow font-medium "
                   : "bg-primary text-white "
               }`}
-              href={"/contact"}
+              href={"#contact"}
             >
               Contact Me
             </Link>
           </li>
         </ul>
-      </div>
+      </header>
     </>
   );
 }

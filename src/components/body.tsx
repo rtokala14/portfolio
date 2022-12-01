@@ -1,6 +1,6 @@
 export function Body() {
   return (
-    <div>
+    <div id="home" className=" h-screen border">
       <text>Body</text>
     </div>
   );
