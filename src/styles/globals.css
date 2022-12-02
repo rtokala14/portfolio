@@ -7,5 +7,5 @@ html {
 }
 
 body {
-  @apply scroll-smooth bg-background p-5;
+  @apply scroll-smooth bg-background p-5 font-patua font-light;
 }

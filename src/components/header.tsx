@@ -12,20 +12,15 @@ export function Header() {
         <title>Rohit Tokala</title>
         <meta name="description" content="Personal portfolio of Rohit Tokala" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Expletus+Sans:wght@600&display=swap"
-          rel="stylesheet"
-        />
       </Head>
-      <header className=" sticky top-0 mb-5 flex flex-row items-center justify-between rounded-3xl border bg-shadow p-3">
-        <Link href={"/"} className=" font-Expletus text-2xl">
+      <header className=" sticky top-0 z-50 mb-5 flex flex-row items-center justify-between rounded-3xl border border-primary bg-shadow p-3">
+        <Link href={"/"} className=" font-expletus text-2xl font-bold">
           Rohit Tokala
         </Link>
         <ul className=" flex flex-row items-center gap-3 text-primary">
           <li>
             <Link
-              className={` rounded-xl p-2 hover:font-medium  `}
+              className={` rounded-xl p-2 text-lg hover:font-medium `}
               href="#home"
               scroll={false}
             >
@@ -34,7 +29,7 @@ export function Header() {
           </li>
           <li>
             <Link
-              className={` rounded-xl p-2 hover:font-medium `}
+              className={` rounded-xl p-2 text-lg hover:font-medium`}
               href="#about"
               scroll={false}
             >
@@ -43,7 +38,7 @@ export function Header() {
           </li>
           <li>
             <Link
-              className={` rounded-xl p-2 hover:font-medium `}
+              className={` rounded-xl p-2 text-lg hover:font-medium`}
               href={"#projects"}
               scroll={false}
             >
