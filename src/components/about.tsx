@@ -17,9 +17,9 @@ export default function About() {
               </h3>
               <p className="text-sm leading-snug tracking-wide text-primary text-opacity-100">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                industry. Lorem Ipsum has been the industrys standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book.
               </p>
             </div>
           </div>
@@ -34,9 +34,9 @@ export default function About() {
               <h3 className="mb-3 text-xl font-bold text-white">Lorem Ipsum</h3>
               <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                industry. Lorem Ipsum has been the industrys standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book.
               </p>
             </div>
           </div>
@@ -53,9 +53,9 @@ export default function About() {
               </h3>
               <p className="text-sm leading-snug tracking-wide text-primary text-opacity-100">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                industry. Lorem Ipsum has been the industrys standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book.
               </p>
             </div>
           </div>
@@ -70,9 +70,9 @@ export default function About() {
               <h3 className="mb-3 text-xl font-bold text-white">Lorem Ipsum</h3>
               <p className="text-sm font-medium leading-snug tracking-wide text-white text-opacity-100">
                 Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                industry. Lorem Ipsum has been the industrys standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book.
               </p>
             </div>
           </div>
