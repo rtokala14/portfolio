@@ -8,8 +8,11 @@ const Home: NextPage = () => {
   return (
     <>
       <Body />
+      <div className=" mb-14" id="about"></div>
       <About />
+      <div className=" mb-14" id="projects"></div>
       <Projects />
+      <div className=" mb-14" id="contact"></div>
       <Contact />
     </>
   );

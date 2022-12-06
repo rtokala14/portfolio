@@ -1,7 +1,3 @@
 export default function Contact() {
-  return (
-    <div id="contact" className=" h-screen border">
-      Contact
-    </div>
-  );
+  return <div className=" h-screen border">Contact</div>;
 }
