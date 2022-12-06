@@ -1,6 +1,7 @@
 export default function About() {
   return (
-    <div className=" h-fit p-5">
+    <div className=" h-fit p-2">
+      <h1 className=" text-5xl font-medium">About</h1>
       {/* <!-- component --> */}
       <div className=" container mx-auto h-full w-full">
         <div className="wrap relative h-full overflow-hidden p-10">

@@ -43,6 +43,7 @@ export default function ProjectCard({
         <div className=" flex justify-evenly pt-2">
           <a
             target={"_blank"}
+            rel={"noreferrer"}
             className=" rounded-xl border-2 border-secondary_bg bg-secondary_bg p-2 text-white hover:bg-white hover:text-secondary_bg"
             href={gitLink}
           >
@@ -50,6 +51,7 @@ export default function ProjectCard({
           </a>
           <a
             target={"_blank"}
+            rel={"noreferrer"}
             className=" rounded-xl border-2 border-black bg-primary p-2 text-white hover:bg-inherit hover:text-black"
             href={preview}
           >
