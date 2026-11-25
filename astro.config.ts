@@ -7,7 +7,7 @@ export default defineConfig({
   trailingSlash: "never",
   build: { format: "file", inlineStylesheets: "auto" },
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/og') && !page.endsWith('/og.html') })],
   fonts: [
     {
       provider: fontProviders.google(),

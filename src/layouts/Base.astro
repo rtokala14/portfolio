@@ -12,7 +12,7 @@ interface Props {
   jsonld?: Record<string, unknown>;
   noindex?: boolean;
 }
-const { title, description = SITE.description, image = "/og.png", type = "website", published, jsonld, noindex = false } = Astro.props;
+const { title, description = SITE.description, image = "/og.jpg", type = "website", published, jsonld, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · Forward deployed engineer, AI`;
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", SITE.url).href;
 const ogImage = new URL(image, SITE.url).href;

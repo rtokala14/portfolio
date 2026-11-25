@@ -1,0 +1,25 @@
+---
+/** Rendered once by scripts/shoot-og.cjs into public/og.png. Not linked, not indexed. */
+import Base from "../layouts/Base.astro";
+import Relief from "../components/Relief.astro";
+import { placeSummits, routesInOrder } from "../lib/summits";
+const summits = placeSummits(await routesInOrder());
+---
+<Base title="Share card" noindex>
+  <div class="og">
+    <Relief summits={summits.filter((s) => s.featured)} class="og-relief" />
+    <div class="plate">
+      <p class="name">Rohit Tokala</p>
+      <p class="role">Forward deployed engineer, AI · Dubai</p>
+      <p class="url">tokala.dev</p>
+    </div>
+  </div>
+</Base>
+<style>
+  .og { position: relative; width: 1200px; height: 630px; overflow: hidden; }
+  .og :global(.og-relief) { position: absolute; inset: 0; }
+  .plate { position: absolute; right: 40px; bottom: 40px; padding: 22px 26px; background: var(--paper); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px; display: grid; gap: 6px; }
+  .name { font: 600 54px/1 var(--font-read); letter-spacing: -0.02em; }
+  .role { font: 400 20px/1.3 var(--font-sign); color: var(--ink-2); }
+  .url { font: 600 16px/1 var(--font-sign); color: var(--alpine); letter-spacing: 0.04em; }
+</style>

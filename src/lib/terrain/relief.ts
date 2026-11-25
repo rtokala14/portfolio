@@ -540,7 +540,9 @@ export class Relief {
     const tt = (performance.now() - this.t0) / 1000;
     const yaw = v.yaw + this.dragYaw.x + life * 0.045 * Math.sin(tt / 9);
     const pitch = Math.max(0.1, Math.min(1.5697, v.pitch + this.dragPitch.x + life * 0.018 * Math.sin(tt / 13 + 1)));
-    const target: Vec3 = [v.tx, 0.05 * (1 - v.map), v.tz];
+    // close up, aim at the ground under the target (a summit sits at the centre, not off the top)
+    const ty = this.terrain.yAt(v.tx, v.tz) * Math.min(1, Math.max(0, 2 * (1 - v.map)));
+    const target: Vec3 = [v.tx, ty, v.tz];
     const dist = v.dist * (1 - 0.3 * this.lift);
     const eye: Vec3 = [target[0] + dist * Math.cos(pitch) * Math.sin(yaw), target[1] + dist * Math.sin(pitch), target[2] + dist * Math.cos(pitch) * Math.cos(yaw)];
     const up: Vec3 = [-Math.sin(yaw), 0, -Math.cos(yaw)]; // "forward" is screen-up at every pitch

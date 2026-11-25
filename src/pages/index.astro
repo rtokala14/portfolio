@@ -181,7 +181,7 @@ const fmt = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: 
   let active = "";
   const pick = () => {
     const wide = matchMedia("(min-width: 900px)").matches;
-    const line = innerHeight * (wide ? 0.55 : 0.8);
+    const line = innerHeight * (wide ? 0.55 : 0.75);
     let best = legs[0];
     for (const l of legs) if (l.getBoundingClientRect().top < line) best = l;
     const name = best?.dataset.go ?? "overview";
@@ -224,7 +224,14 @@ const fmt = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: 
   /* ---------- the sheet: mobile first ---------- */
   .descent { position: relative; }
   .stage { position: sticky; top: 0; z-index: 2; height: 56svh; box-shadow: 0 1px 0 var(--rule); }
-  .stage :global(.home-relief) { position: absolute; inset: 0; --occlude: 0px; }
+  .stage :global(.home-relief) { position: absolute; inset: 0; --occlude: 0px; --poster: url(/poster/narrow-light.webp); background: var(--haze) var(--poster) center / cover no-repeat; }
+  :global(:root[data-theme="dark"]) .stage :global(.home-relief) { --poster: url(/poster/narrow-dark.webp); }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .stage :global(.home-relief) { --poster: url(/poster/narrow-dark.webp); } }
+  @media (min-width: 900px) {
+    .stage :global(.home-relief) { --poster: url(/poster/wide-light.webp); }
+    :global(:root[data-theme="dark"]) .stage :global(.home-relief) { --poster: url(/poster/wide-dark.webp); }
+  }
+  @media (min-width: 900px) and (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .stage :global(.home-relief) { --poster: url(/poster/wide-dark.webp); } }
   .stage :global(.top) { z-index: 3; }
   .legs { position: relative; z-index: 1; }
   .leg {
@@ -234,6 +241,10 @@ const fmt = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: 
     border-top: 1px solid var(--rule);
   }
   .leg.hero { min-height: auto; display: grid; gap: 26px; padding-top: 22px; }
+  @media (max-width: 899px) {
+    :global(html) { scroll-snap-type: y proximity; }
+    .leg:not(.hero) { scroll-snap-align: start; scroll-margin-top: 56svh; }
+  }
   .hero .legend { order: -1; display: grid; gap: 14px; }
 
   h1 { font: 600 var(--t-2xl)/1.02 var(--font-read); letter-spacing: -0.025em; max-width: 12ch; }

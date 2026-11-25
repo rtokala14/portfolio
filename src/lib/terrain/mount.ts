@@ -67,7 +67,7 @@ export async function mountRelief(root: HTMLElement): Promise<ReliefController |
     const yaws = [-0.35, 0.3, -0.18, 0.22, -0.28];
     summits.forEach((s, i) => {
       // a gentle oblique view, close enough that the sheet's edges stay off-screen
-      out[`summit:${s.slug}`] = { tx: s.x, tz: s.z + 0.05, yaw: yaws[i % yaws.length] ?? 0, pitch: 1.0, fov: FOV, map: 0.5, dist: narrow ? 1.0 : 0.85 };
+      out[`summit:${s.slug}`] = { tx: s.x, tz: s.z + 0.02, yaw: yaws[i % yaws.length] ?? 0, pitch: 1.0, fov: FOV, map: 0.5, dist: narrow ? 1.0 : 0.85 };
     });
     return out;
   };
