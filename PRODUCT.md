@@ -26,7 +26,7 @@ Success: within 30 seconds a visitor believes "whatever the problem is, this per
 
 ## Positioning
 
-He finds manual work inside a very large organisation (and its clients) that, in the agentic era, should not be done by hand any more, and he makes agents do it well. To other engineers: he picks a problem and hill-climbs it — latency, eval scores, fine-tune accuracy, multi-agent error rates — until the number moves and stays moved. Every claim on the site is a measured before → after, never an adjective.
+He finds manual work inside a very large organisation (and its clients) that, in the agentic era, should not be done by hand any more, and he builds the agents that do it well. To other engineers: he picks a problem and hill-climbs it — latency, eval scores, fine-tune accuracy, multi-agent error rates — until the number moves and stays moved. Every claim on the site is a measured before → after, never an adjective.
 
 ## Operating Context
 
