@@ -1,0 +1,107 @@
+---
+import Base from "../../layouts/Base.astro";
+import Grade from "../../components/Grade.astro";
+import SheetHeader from "../../components/SheetHeader.astro";
+import SheetFooter from "../../components/SheetFooter.astro";
+import { getCollection, render } from "astro:content";
+import { SITE, readingMinutes, walkingTime } from "../../lib/site";
+
+export async function getStaticPaths() {
+  const all = (await getCollection("reports", (r) => import.meta.env.DEV || !r.data.draft)).sort((a, b) => +a.data.date - +b.data.date);
+  return all.map((r, i) => ({ params: { slug: r.id }, props: { r, prev: all[i - 1], next: all[i + 1] } }));
+}
+const { r, prev, next } = Astro.props;
+const { Content, headings } = await render(r);
+const minutes = readingMinutes(r.body ?? "");
+// The masthead profile: one point per block of text, height from how dense that stretch is.
+const blocks = (r.body ?? "").split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
+const dens = blocks.map((b) => (b.startsWith("<") || b.startsWith("```") ? 1.4 : Math.min(1.2, b.split(/\s+/).length / 70)));
+let acc = 0;
+const smooth = dens.map((d) => (acc = acc * 0.55 + d * 0.45));
+const W = 1000, H = 60;
+const pts = smooth.map((d, i) => [(i / Math.max(1, smooth.length - 1)) * W, H - 6 - d * (H - 16)]);
+const area = `M0 ${H} ` + pts.map(([x, y]) => `L${x!.toFixed(1)} ${y!.toFixed(1)}`).join(" ") + ` L${W} ${H} Z`;
+const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x!.toFixed(1)} ${y!.toFixed(1)}`).join(" ");
+const date = r.data.date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const jsonld = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: r.data.title,
+  description: r.data.description,
+  datePublished: r.data.date.toISOString(),
+  author: { "@type": "Person", name: SITE.name, url: SITE.url },
+  mainEntityOfPage: new URL(`/reports/${r.id}`, SITE.url).href,
+  keywords: r.data.tags.join(", "),
+};
+---
+<Base title={r.data.title} description={r.data.description} type="article" published={r.data.date} jsonld={jsonld} noindex={r.data.draft}>
+  <SheetHeader sheet="Trip report" />
+  <div class="mast" aria-hidden="true">
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+      <path class="area" d={area} />
+      <path class="line" d={line} />
+      <clipPath id="walked"><rect class="walked" x="0" y="0" width={W} height={H} /></clipPath>
+      <path class="line done" d={line} clip-path="url(#walked)" />
+    </svg>
+  </div>
+  <main id="main" class="wrap">
+    <article class="report">
+      <header>
+        {r.data.draft && <p class="draft">Draft, not published</p>}
+        <h1>{r.data.title}</h1>
+        <p class="meta">
+          <time datetime={r.data.date.toISOString()}>{date}</time>
+          <Grade grade={r.data.grade} />
+          <span class="time"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13Zm0 3v4l2.5 1.5" /></svg>{walkingTime(minutes)}</span>
+        </p>
+        <p class="dek">{r.data.description}</p>
+      </header>
+      {headings.filter((h) => h.depth === 2).length > 2 && (
+        <nav class="toc" aria-label="Waypoints">
+          <p>Waypoints</p>
+          <ol role="list">{headings.filter((h) => h.depth === 2).map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        </nav>
+      )}
+      <div class="prose"><Content /></div>
+      <nav class="onward" aria-label="More trip reports">
+        {prev ? <a href={`/reports/${prev.id}`}>Earlier: {prev.data.title}</a> : <span />}
+        {next && <a href={`/reports/${next.id}`}>Later: {next.data.title}</a>}
+      </nav>
+    </article>
+  </main>
+  <SheetFooter />
+</Base>
+
+<style>
+  .mast { position: sticky; top: 0; z-index: 4; height: 34px; background: var(--paper); border-bottom: 1px solid var(--rule); }
+  .mast svg { width: 100%; height: 100%; display: block; }
+  .area { fill: color-mix(in oklab, var(--contour) 10%, transparent); }
+  .line { fill: none; stroke: var(--rule); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .done { stroke: var(--alpine); stroke-dasharray: 6 4; }
+  .walked { transform-origin: 0 0; transform: scaleX(0); }
+  @supports (animation-timeline: scroll()) {
+    .walked { animation: walk linear both; animation-timeline: scroll(root); }
+    @keyframes walk { to { transform: scaleX(1); } }
+  }
+  .report { max-width: 44rem; margin-inline: auto; padding-block: 36px 0; }
+  header { display: grid; gap: 14px; }
+  .draft { justify-self: start; padding: 4px 8px; border: 1px dashed var(--alpine); color: var(--alpine); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.1em; }
+  h1 { font: 600 var(--t-2xl)/1.04 var(--font-read); letter-spacing: -0.025em; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: var(--t-sm); color: var(--ink-3); }
+  .time { display: inline-flex; gap: 6px; align-items: center; font-variant-numeric: tabular-nums; }
+  .time svg { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
+  .dek { font: 400 var(--t-lg)/1.45 var(--font-read); color: var(--ink-2); }
+  .toc { margin-top: 28px; padding: 14px 0; border-block: 1px solid var(--rule); font-size: var(--t-sm); }
+  .toc p { font-weight: 600; font-size: var(--t-xs); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: wp; display: grid; gap: 4px; }
+  .toc li { counter-increment: wp; display: flex; gap: 10px; }
+  .toc li::before { content: counter(wp); font-variant-numeric: tabular-nums; color: var(--ink-3); width: 1.2em; }
+  .prose { margin-top: 32px; font: 400 1.125rem/1.75 var(--font-read); max-width: var(--measure); }
+  .prose :global(:where(p, ul, ol, pre, blockquote) + :where(p, ul, ol, pre, blockquote)) { margin-top: 1.15em; }
+  .prose :global(h2) { font: 600 var(--t-xl)/1.15 var(--font-read); margin: 2em 0 0.6em; scroll-margin-top: 56px; }
+  .prose :global(h3) { font: 600 var(--t-lg)/1.2 var(--font-sign); margin: 1.6em 0 0.4em; }
+  .prose :global(pre) { padding: 14px 16px; overflow-x: auto; font-size: 0.875rem; line-height: 1.6; border: 1px solid var(--rule); }
+  .prose :global(:not(pre) > code) { font-size: 0.9em; padding: 0.1em 0.3em; background: var(--paper-2); border-radius: 3px; }
+  .prose :global(blockquote) { padding-left: 16px; border-left: 3px solid var(--sign); color: var(--ink-2); }
+  .onward { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); font-weight: 600; }
+</style>

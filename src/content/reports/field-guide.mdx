@@ -1,0 +1,66 @@
+---
+title: Field guide to writing a trip report
+description: A draft that never publishes. It shows every piece a report can use, so writing the real ones is only writing.
+date: 2026-11-25
+grade: T1
+tags: [meta]
+draft: true
+---
+
+import Note from "../../components/mdx/Note.astro";
+import Scrubber from "../../components/mdx/Scrubber.astro";
+import AgentTrace from "../../components/mdx/AgentTrace.astro";
+
+This file is a template. It stays a draft, so it only shows up when the site runs locally. Copy it, rename it, set `draft: false`, and the report is live: listed on the home page, in the RSS feed and the sitemap, with its own share card.
+
+## Front matter
+
+Every report needs a title, a one-sentence description (it becomes the search snippet and the share text), a date, and a grade on the Swiss hiking scale. T1 is a stroll: a short note. T6 is an alpine route: long, technical, figures throughout. Reading time is worked out from the text, and the masthead profile is drawn from how dense each stretch of writing is.
+
+## Notes in the margin
+
+<Note>Use a note for something the reader should not miss, without breaking the flow of the paragraph.</Note>
+
+<Note kind="summit">Use a result note for the number the whole report is building to.</Note>
+
+## A chart you can scrub
+
+Drag across the chart, or use the slider, to read every series at one point. The data below is made up to show the component.
+
+<Scrubber
+  x="Examples in context"
+  y="Task accuracy"
+  unit="%"
+  illustrative
+  series={[
+    { name: "Prompted", points: [[0, 52], [4, 63], [8, 69], [16, 73], [32, 75], [64, 76]] },
+    { name: "Fine-tuned", points: [[0, 71], [4, 74], [8, 76], [16, 77], [32, 77.5], [64, 78]] },
+  ]}
+/>
+
+## A trace you can replay
+
+Press play to watch several agents work towards one output, or drag the playhead to any moment. This trace is also made up.
+
+<AgentTrace
+  illustrative
+  events={[
+    { agent: "Planner", start: 0, end: 3, kind: "think", label: "Splits the brief into four sections" },
+    { agent: "Planner", start: 3, end: 4, kind: "tool", label: "Assigns sections, sets a token budget" },
+    { agent: "Writer A", start: 4, end: 9, kind: "tool", label: "Retrieves the scope documents" },
+    { agent: "Writer A", start: 9, end: 15, kind: "write", label: "Drafts section 1" },
+    { agent: "Writer B", start: 4, end: 7, kind: "wait", label: "Rate limited, backing off" },
+    { agent: "Writer B", start: 7, end: 13, kind: "write", label: "Drafts section 2" },
+    { agent: "Writer B", start: 13, end: 14, kind: "collide", label: "Edits the same heading as Writer A" },
+    { agent: "Writer B", start: 14, end: 17, kind: "write", label: "Rebases onto A's version" },
+    { agent: "Reviewer", start: 15, end: 20, kind: "think", label: "Checks every figure against its source" },
+    { agent: "Reviewer", start: 20, end: 22, kind: "write", label: "Merges the final document" },
+  ]}
+/>
+
+## Code
+
+```ts
+// code blocks are highlighted at build time, in both themes
+const climb = (from: number, to: number) => `${from} → ${to}`;
+```

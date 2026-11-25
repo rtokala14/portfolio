@@ -1,0 +1,17 @@
+---
+/** A margin note, the way a map annotates a hazard or a viewpoint. */
+interface Props { kind?: "note" | "warning" | "summit" }
+const { kind = "note" } = Astro.props;
+const title = { note: "Note", warning: "Careful", summit: "Result" }[kind];
+---
+<aside class="note" data-kind={kind}>
+  <p class="k">{title}</p>
+  <div><slot /></div>
+</aside>
+<style>
+  .note { margin: 1.6em 0; padding: 14px 16px; border: 1px solid var(--rule); background: var(--paper-2); display: grid; gap: 6px; font: 400 var(--t-md)/1.6 var(--font-read); }
+  .k { font: 600 var(--t-xs)/1 var(--font-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+  [data-kind="warning"] { border-color: color-mix(in oklab, var(--alpine) 45%, var(--rule)); }
+  [data-kind="warning"] .k { color: var(--alpine); }
+  [data-kind="summit"] { border-color: var(--sign-edge); background: color-mix(in oklab, var(--sign) 14%, var(--paper)); }
+</style>

@@ -1,0 +1,65 @@
+---
+import Base from "../../layouts/Base.astro";
+import Relief from "../../components/Relief.astro";
+import Grade from "../../components/Grade.astro";
+import SheetHeader from "../../components/SheetHeader.astro";
+import SheetFooter from "../../components/SheetFooter.astro";
+import { placeSummits, routesInOrder } from "../../lib/summits";
+const routes = await routesInOrder();
+const summits = placeSummits(routes);
+const groups = [
+  { name: "Client work", items: routes.filter((r) => r.data.kind === "work") },
+  { name: "Personal", items: routes.filter((r) => r.data.kind === "side") },
+];
+---
+<Base title="Work" description="Projects by Rohit Tokala: AI and data tools for engineering and construction clients, and things he builds for himself.">
+  <div class="stage">
+    <SheetHeader overlay sheet="Work" />
+    <Relief summits={summits} view="sheet" class="routes-relief" />
+  </div>
+  <main id="main" class="wrap">
+    <div class="col">
+      <h1>Work</h1>
+      <p class="sub measure">Each project is a summit on the map. The grade is the Swiss hiking scale, from an easy walk (T1) to an alpine route (T6), and it's roughly how hard the project was.</p>
+      {groups.map((g) => (
+        <section aria-labelledby={`g-${g.name}`}>
+          <h2 id={`g-${g.name}`}>{g.name}</h2>
+          <ol role="list" class="list">
+            {g.items.map((r) => (
+              <li>
+                <a href={`/routes/${r.id}`} data-summit-link={r.id}>
+                  <span class="name" style={`view-transition-name: summit-${r.id}`}>{r.data.summit}</span>
+                  <span class="title">{r.data.title}</span>
+                  <span class="aside"><Grade grade={r.data.grade} /><span>{r.data.period}</span></span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  </main>
+  <SheetFooter />
+</Base>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-summit-link]").forEach((a) => {
+    const on = (v: boolean) => document.querySelector(`[data-summit="${a.dataset.summitLink}"]`)?.toggleAttribute("data-active", v);
+    a.addEventListener("pointerenter", () => on(true));
+    a.addEventListener("pointerleave", () => on(false));
+  });
+</script>
+<style>
+  .stage { position: relative; height: 52svh; min-height: 320px; }
+  .stage :global(.routes-relief) { position: absolute; inset: 0; }
+  @media (min-width: 900px) { .stage { height: 64svh; } }
+  h1 { font: 600 var(--t-2xl)/1.02 var(--font-read); letter-spacing: -0.025em; margin-top: 32px; }
+  .sub { margin-top: 12px; font: 400 var(--t-md)/1.55 var(--font-read); color: var(--ink-2); }
+  h2 { margin-top: 48px; font: 600 var(--t-xs)/1 var(--font-sign); letter-spacing: 0.12em; text-transform: uppercase; }
+  .list { margin: 14px 0 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+  .list a { display: grid; gap: 4px 24px; padding: 16px 0; border-bottom: 1px solid var(--rule); text-decoration: none; grid-template-columns: minmax(0, 1fr); transition: background-color 160ms var(--ease-out), padding 240ms var(--ease-out); }
+  .list a:hover { background: color-mix(in oklab, var(--sign) 18%, transparent); padding-inline: 10px; }
+  .name { font: 600 var(--t-lg)/1.2 var(--font-read); }
+  .title { color: var(--ink-2); }
+  .aside { display: flex; gap: 14px; align-items: center; font-size: var(--t-sm); color: var(--ink-3); }
+  @media (min-width: 820px) { .list a { grid-template-columns: 14rem minmax(0, 1fr) 11rem; align-items: baseline; } .aside { justify-content: end; } }
+</style>

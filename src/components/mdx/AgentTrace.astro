@@ -1,0 +1,119 @@
+---
+/**
+ * A replayable agent trace: one lane per agent, time running left to right.
+ * Press play, or drag the playhead, to see what every agent was doing at that moment.
+ * kind: "think" | "tool" | "write" | "wait" | "collide"
+ */
+interface Event { agent: string; start: number; end: number; kind: "think" | "tool" | "write" | "wait" | "collide"; label: string }
+interface Props { events: Event[]; unit?: string; caption?: string; illustrative?: boolean }
+const { events, unit = "s", caption, illustrative = false } = Astro.props;
+const agents = [...new Set(events.map((e) => e.agent))];
+const tMax = Math.max(...events.map((e) => e.end));
+const kinds: Record<Event["kind"], string> = { think: "Thinking", tool: "Tool call", write: "Writing", wait: "Waiting", collide: "Collision" };
+---
+<figure class="trace" data-trace data-tmax={tMax} data-unit={unit}>
+  <div class="lanes" style={`--n:${agents.length}`}>
+    {agents.map((a) => (
+      <div class="lane">
+        <span class="who">{a}</span>
+        <div class="track">
+          {events.filter((e) => e.agent === a).map((e) => (
+            <span class="ev" data-kind={e.kind} data-start={e.start} data-end={e.end} data-label={e.label} data-agent={a}
+              style={`left:${(e.start / tMax) * 100}%;width:${((e.end - e.start) / tMax) * 100}%`} title={`${a}: ${e.label}`}></span>
+          ))}
+        </div>
+      </div>
+    ))}
+    <div class="head" data-head aria-hidden="true"></div>
+  </div>
+  <div class="controls">
+    <button type="button" data-play aria-label="Play the trace">
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path data-icon d="M4 2.5v11l9-5.5Z" /></svg>
+    </button>
+    <input type="range" min="0" max={tMax} step={tMax / 400} value="0" data-t aria-label="Time in the trace" />
+    <output class="num" data-clock>0.0 {unit}</output>
+  </div>
+  <ol class="now" role="list" data-now aria-live="polite"></ol>
+  <figcaption>
+    {Object.entries(kinds).filter(([k]) => events.some((e) => e.kind === k)).map(([k, v]) => <span class="key" data-kind={k}>{v}</span>)}
+    {caption && <span>{caption}</span>}
+    {illustrative && <span>Illustrative trace.</span>}
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-trace]").forEach((root) => {
+    const tMax = +root.dataset.tmax!, unit = root.dataset.unit ?? "s";
+    const range = root.querySelector<HTMLInputElement>("[data-t]")!;
+    const head = root.querySelector<HTMLElement>("[data-head]")!;
+    const clock = root.querySelector<HTMLOutputElement>("[data-clock]")!;
+    const now = root.querySelector<HTMLOListElement>("[data-now]")!;
+    const play = root.querySelector<HTMLButtonElement>("[data-play]")!;
+    const icon = root.querySelector<SVGPathElement>("[data-icon]")!;
+    const evs = [...root.querySelectorAll<HTMLElement>(".ev")];
+    const agents = [...new Set(evs.map((e) => e.dataset.agent!))];
+    let raf = 0, last = 0;
+    const set = (t: number) => {
+      range.value = String(t);
+      head.style.setProperty("--t", String(t / tMax));
+      clock.textContent = `${t.toFixed(1)} ${unit}`;
+      evs.forEach((e) => e.toggleAttribute("data-live", +e.dataset.start! <= t && t < +e.dataset.end!));
+      now.replaceChildren(...agents.map((a) => {
+        const e = evs.find((x) => x.dataset.agent === a && +x.dataset.start! <= t && t < +x.dataset.end!);
+        const li = document.createElement("li");
+        li.innerHTML = `<b></b> <span></span>`;
+        li.querySelector("b")!.textContent = a;
+        li.querySelector("span")!.textContent = e ? e.dataset.label! : "idle";
+        if (e) li.dataset.kind = e.dataset.kind!;
+        return li;
+      }));
+    };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; icon.setAttribute("d", "M4 2.5v11l9-5.5Z"); play.setAttribute("aria-label", "Play the trace"); };
+    const tick = (ts: number) => {
+      const dt = (ts - last) / 1000; last = ts;
+      const t = Math.min(tMax, +range.value + dt * (tMax / 8));
+      set(t);
+      if (t >= tMax) return stop();
+      raf = requestAnimationFrame(tick);
+    };
+    play.addEventListener("click", () => {
+      if (raf) return stop();
+      if (+range.value >= tMax) set(0);
+      icon.setAttribute("d", "M4 2.5h3v11H4zM9 2.5h3v11H9z"); play.setAttribute("aria-label", "Pause the trace");
+      last = performance.now(); raf = requestAnimationFrame(tick);
+    });
+    range.addEventListener("input", () => { stop(); set(+range.value); });
+    set(tMax * 0.3);
+  });
+</script>
+
+<style>
+  .trace { margin: 2em 0; padding: 16px; border: 1px solid var(--rule); background: var(--paper); display: grid; gap: 12px; }
+  .lanes { position: relative; display: grid; gap: 8px; }
+  .lane { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: center; gap: 10px; }
+  .who { font: 600 var(--t-xs)/1.2 var(--font-sign); color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .track { position: relative; height: 18px; background: var(--paper-2); border-radius: 2px; }
+  .ev { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; transition: filter 120ms; }
+  .ev[data-kind="think"] { background: color-mix(in oklab, var(--ink) 22%, transparent); }
+  .ev[data-kind="tool"] { background: var(--lake); }
+  .ev[data-kind="write"] { background: var(--contour); }
+  .ev[data-kind="wait"] { background: repeating-linear-gradient(90deg, var(--rule) 0 3px, transparent 3px 6px); }
+  .ev[data-kind="collide"] { background: var(--alpine); }
+  .ev[data-live] { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 1; }
+  .head { position: absolute; top: -4px; bottom: -4px; left: calc(5.5rem + 10px + (100% - 5.5rem - 10px) * var(--t, 0)); width: 1.5px; background: var(--ink); pointer-events: none; }
+  .controls { display: grid; grid-template-columns: auto minmax(0, 1fr) 4.5rem; gap: 12px; align-items: center; }
+  button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--sign); color: var(--sign-ink); cursor: pointer; }
+  button svg { fill: currentColor; }
+  input[type="range"] { width: 100%; accent-color: var(--ink); }
+  output { font: 500 var(--t-sm) var(--font-sign); text-align: right; }
+  .now { margin: 0; padding: 10px 0 0; list-style: none; border-top: 1px solid var(--rule); display: grid; gap: 4px; font: 400 var(--t-sm)/1.4 var(--font-sign); color: var(--ink-2); min-height: 4.5em; }
+  .now :global(b) { color: var(--ink); font-weight: 600; }
+  .now :global(li[data-kind="collide"] span) { color: var(--alpine); font-weight: 600; }
+  figcaption { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 var(--t-xs)/1.4 var(--font-sign); color: var(--ink-3); }
+  .key::before { content: ""; display: inline-block; width: 12px; height: 8px; margin-right: 6px; border-radius: 1px; }
+  .key[data-kind="think"]::before { background: color-mix(in oklab, var(--ink) 22%, transparent); }
+  .key[data-kind="tool"]::before { background: var(--lake); }
+  .key[data-kind="write"]::before { background: var(--contour); }
+  .key[data-kind="wait"]::before { background: repeating-linear-gradient(90deg, var(--rule) 0 3px, transparent 3px 6px); }
+  .key[data-kind="collide"]::before { background: var(--alpine); }
+</style>

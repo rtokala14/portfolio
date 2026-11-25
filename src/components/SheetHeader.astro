@@ -1,0 +1,66 @@
+---
+interface Props { sheet?: string; overlay?: boolean }
+const { sheet = "Sheet 1", overlay = false } = Astro.props;
+---
+<header class:list={["top wrap", { overlay }]}>
+  <a class="mark" href="/" aria-label="tokala.dev, home">
+    <svg viewBox="0 0 20 14" width="20" height="14" aria-hidden="true"><path d="M1 13 7.5 3l3.2 4.6L13 5l6 8Z" /></svg>
+    tokala.dev
+  </a>
+  <span class="sheet">{sheet} · Jebel Jais 1:25 000</span>
+  <nav aria-label="Primary">
+    <a href="/routes">Work</a>
+    <a href="/reports">Writing</a>
+    <button type="button" class="theme" data-theme-toggle aria-label="Switch between day and dusk sheets">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" /><path d="M8 1.8a6.2 6.2 0 0 0 0 12.4Z" /></svg>
+      <span data-theme-label>Dusk</span>
+    </button>
+  </nav>
+</header>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const label = document.querySelector<HTMLElement>("[data-theme-label]");
+  const mq = matchMedia("(prefers-color-scheme: dark)");
+  const current = () => document.documentElement.dataset.theme ?? (mq.matches ? "dark" : "light");
+  const sync = () => {
+    if (label) label.textContent = current() === "dark" ? "Day" : "Dusk";
+  };
+  sync();
+  mq.addEventListener("change", sync);
+  btn?.addEventListener("click", () => {
+    const next = current() === "dark" ? "light" : "dark";
+    const apply = () => {
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem("theme", next); } catch {}
+      sync();
+    };
+    if (document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(apply);
+    else apply();
+  });
+</script>
+<style>
+  .top {
+    position: relative; z-index: 5;
+    display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap;
+    padding-block: 12px;
+    font: 500 var(--t-sm)/1.2 var(--font-sign);
+    color: var(--ink-2);
+  }
+  .overlay { position: absolute; inset: 0 0 auto; }
+  .overlay .mark, .overlay .sheet, .overlay nav a { text-shadow: 0 0 2px var(--paper), 0 0 8px var(--paper), 0 0 14px var(--paper); }
+  .mark { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-weight: 600; }
+  .mark svg { fill: var(--ink); }
+  .sheet { display: none; font-variant-numeric: tabular-nums; }
+  nav { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  nav a { text-decoration: none; color: var(--ink); }
+  nav a:hover { color: var(--alpine); }
+  .theme {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--paper); color: var(--ink); cursor: pointer; font: inherit;
+  }
+  .theme svg { fill: var(--ink); stroke: var(--ink); stroke-width: 1.2; }
+  .theme svg circle { fill: none; }
+  .theme:hover { border-color: var(--ink-3); }
+  @media (max-width: 479px) { nav a { display: none; } }
+  @media (min-width: 900px) { .sheet { display: inline; } }
+</style>

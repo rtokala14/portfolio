@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import SheetHeader from "../components/SheetHeader.astro";
+---
+<Base title="Not surveyed" description="This part of the sheet has not been surveyed yet." noindex>
+  <SheetHeader />
+  <main id="main" class="wrap blank">
+    <div class="hatch" aria-hidden="true"></div>
+    <div class="col msg">
+      <h1>This area has not been surveyed.</h1>
+      <p>Old maps left unknown ground blank rather than guess. Same here: the page you asked for isn't on the sheet.</p>
+      <p><a href="/">Back to the map</a> · <a href="/routes">All routes</a> · <a href="/reports">Trip reports</a></p>
+    </div>
+  </main>
+</Base>
+<style>
+  .blank { position: relative; min-height: 80svh; display: grid; align-items: center; }
+  .hatch { position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent 0 9px, color-mix(in oklab, var(--contour) 22%, transparent) 9px 10px); mask: radial-gradient(70% 60% at 50% 50%, #000 30%, transparent 75%); }
+  .msg { position: relative; max-width: 34rem; display: grid; gap: 14px; padding: 28px; background: var(--paper); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px; }
+  h1 { font: 600 var(--t-xl)/1.1 var(--font-read); }
+  p { font: 400 var(--t-md)/1.6 var(--font-read); color: var(--ink-2); }
+</style>

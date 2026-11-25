@@ -1,0 +1,42 @@
+---
+import Base from "../../layouts/Base.astro";
+import Grade from "../../components/Grade.astro";
+import SheetHeader from "../../components/SheetHeader.astro";
+import SheetFooter from "../../components/SheetFooter.astro";
+import { getCollection } from "astro:content";
+import { readingMinutes, walkingTime } from "../../lib/site";
+const reports = (await getCollection("reports", (r) => import.meta.env.DEV || !r.data.draft)).sort((a, b) => +b.data.date - +a.data.date);
+const fmt = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+---
+<Base title="Trip reports" description="Weekly notes from Rohit Tokala: something built or tested, and what the numbers said.">
+  <SheetHeader sheet="Trip reports" />
+  <main id="main" class="wrap">
+    <div class="col">
+      <h1>Trip reports</h1>
+      <p class="sub measure">One a week. Something I built or tested, and what the numbers said. Graded like hikes, timed for reading. <a href="/rss.xml">Follow by RSS</a>.</p>
+      <ol role="list" class="log">
+        {reports.map((r) => (
+          <li>
+            <time datetime={r.data.date.toISOString()}>{fmt(r.data.date)}</time>
+            <div><a href={`/reports/${r.id}`}>{r.data.title}</a><p>{r.data.description}</p></div>
+            <span class="aside"><Grade grade={r.data.grade} /><span class="num">{walkingTime(readingMinutes(r.body ?? ""))}</span></span>
+          </li>
+        ))}
+        {reports.length === 0 && <li class="empty">The first report is on its way. Subscribe by RSS and it will find you.</li>}
+      </ol>
+    </div>
+  </main>
+  <SheetFooter />
+</Base>
+<style>
+  h1 { font: 600 var(--t-2xl)/1.02 var(--font-read); letter-spacing: -0.025em; margin-top: 32px; }
+  .sub { margin-top: 12px; font: 400 var(--t-md)/1.55 var(--font-read); color: var(--ink-2); }
+  .log { margin: 32px 0 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+  .log li { display: grid; gap: 6px 24px; padding: 18px 0; border-bottom: 1px solid var(--rule); }
+  .log time { font-size: var(--t-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .log a { font: 600 var(--t-lg)/1.25 var(--font-read); }
+  .log p { color: var(--ink-2); margin-top: 4px; }
+  .aside { display: flex; gap: 14px; align-items: center; font-size: var(--t-sm); color: var(--ink-3); }
+  .empty { color: var(--ink-2); }
+  @media (min-width: 820px) { .log li { grid-template-columns: 9rem minmax(0, 1fr) 9rem; align-items: baseline; } .aside { justify-content: end; } }
+</style>

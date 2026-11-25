@@ -1,0 +1,54 @@
+---
+import { SITE } from "../lib/site";
+import { terrainMeta } from "../lib/summits";
+const b = terrainMeta.bounds;
+const lat = ((b.north + b.south) / 2).toFixed(2);
+const lon = ((b.east + b.west) / 2).toFixed(2);
+const year = new Date().getFullYear();
+---
+<footer class="margin wrap">
+  <div class="col grid">
+    <section aria-labelledby="legend-h">
+      <h2 id="legend-h">Legend</h2>
+      <ul role="list" class="legend">
+        <li><svg viewBox="0 0 28 10" aria-hidden="true"><path d="M1 7c6-6 10 2 16-2s8 0 10 0" class="c" /></svg>Contour, 100 m</li>
+        <li><svg viewBox="0 0 28 10" aria-hidden="true"><path d="M1 6c6-6 10 2 16-2s8 0 10 0" class="ci" /></svg>Index contour, 500 m</li>
+        <li><svg viewBox="0 0 28 10" aria-hidden="true"><path d="M1 3c5 1 8 6 13 5s9-5 13-4" class="w" /></svg>Wadi</li>
+        <li><svg viewBox="0 0 28 10" aria-hidden="true"><path d="M14 1.5 19 9H9Z" class="s" /></svg>Summit: a project</li>
+      </ul>
+    </section>
+    <section aria-labelledby="sheet-h">
+      <h2 id="sheet-h">This sheet</h2>
+      <p>The Jebel Jais massif, Ras Al Khaimah. <span class="num">{lat}° N {lon}° E</span>. A Swiss map of the mountain I hike.</p>
+      <p>Flat, the sheet is lit from the north-west, as maps are. Lifted into 3D, it takes the sun over Dubai at that minute.</p>
+      <p class="fine">Elevation from SRTM and other open data via AWS Terrain Tiles. Contours, wadis and relief drawn in your browser.</p>
+    </section>
+    <section aria-labelledby="ways-h">
+      <h2 id="ways-h">Elsewhere</h2>
+      <ul role="list" class="ways">
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li><a href={SITE.github} rel="me">GitHub</a></li>
+        <li><a href={SITE.x} rel="me">X</a></li>
+        <li><a href="/rss.xml">RSS</a></li>
+        <li><a href="/colophon">How this is made</a></li>
+      </ul>
+    </section>
+  </div>
+  <p class="col imprint num">Rohit Tokala · Drawn in Dubai · {year}</p>
+</footer>
+<style>
+  .margin { border-top: 1px solid var(--rule); padding-block: 32px 28px; margin-top: 64px; font-size: var(--t-sm); color: var(--ink-2); }
+  .grid { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 760px) { .grid { grid-template-columns: 1.1fr 1.3fr 0.8fr; } }
+  h2 { font: 600 var(--t-xs)/1 var(--font-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); margin-bottom: 12px; }
+  p + p { margin-top: 8px; }
+  .fine { font-size: var(--t-xs); color: var(--ink-3); }
+  ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .legend li { display: flex; align-items: center; gap: 10px; }
+  .legend svg { width: 28px; height: 10px; flex: none; fill: none; }
+  .c { stroke: var(--contour); stroke-width: 0.8; opacity: 0.7; }
+  .ci { stroke: var(--contour); stroke-width: 1.6; }
+  .w { stroke: var(--lake); stroke-width: 1.2; }
+  .s { fill: var(--ink); }
+  .imprint { margin-top: 28px; font-size: var(--t-xs); color: var(--ink-3); }
+</style>

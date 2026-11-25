@@ -1,0 +1,125 @@
+---
+import type { PlacedSummit } from "../lib/summits";
+
+interface Props {
+  summits: PlacedSummit[];
+  view?: string;
+  class?: string;
+  showRange?: boolean;
+  /** Where a phone's narrow view centres the sheet (world x, z). */
+  centre?: [number, number];
+}
+const { summits, view = "overview", class: cls = "", showRange = true, centre = [0.28, -0.1] } = Astro.props;
+const data = summits.map(({ slug, name, x, z, featured }) => ({ slug, name, x, z, featured }));
+---
+<div class:list={["relief", cls]} data-summits={JSON.stringify(data)} data-centre={JSON.stringify(centre)} data-view={view} data-state="loading">
+  <canvas tabindex="0" aria-label="A map of the Jebel Jais massif. Drag it, or use the arrow keys, to lift it into 3D."></canvas>
+  {showRange && <p class="range" data-range aria-hidden="true">Jebel Jais</p>}
+  <ul class="summits" role="list" aria-label="Summits on this sheet">
+    {
+      summits.map((s) => (
+        <li data-summit={s.slug} data-featured={s.featured ? "" : undefined}>
+          <a href={`/routes/${s.slug}`}>
+            <svg viewBox="0 0 12 10" width="12" height="10" aria-hidden="true"><path d="M6 0.8 11.2 9.2H0.8Z" /></svg>
+            <span>{s.name}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  import { mountRelief } from "../lib/terrain/mount";
+  const root = document.querySelector<HTMLElement>(".relief");
+  if (root) {
+    const ready = mountRelief(root).catch((e) => {
+      console.warn("relief:", e);
+      root.dataset.state = "fallback";
+      return null;
+    });
+    (window as unknown as { __reliefReady: unknown }).__reliefReady = ready;
+  }
+</script>
+
+<style>
+  .relief {
+    position: relative;
+    overflow: clip;
+    isolation: isolate;
+    --haze: #e8e4da;
+    background: var(--haze);
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 700ms var(--ease-out);
+    outline-offset: -4px;
+  }
+  .relief[data-state="ready"] canvas { opacity: 1; }
+  :global(:root[data-theme="dark"]) .relief { --haze: #161b22; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .relief { --haze: #161b22; } }
+  .relief[data-dragging] canvas { cursor: grabbing; }
+
+  .summits { position: absolute; inset: 0; pointer-events: none; margin: 0; padding: 0; list-style: none; }
+  .summits li {
+    position: absolute;
+    left: 0;
+    top: 0;
+    translate: -9999px -9999px;
+    pointer-events: auto;
+    will-change: translate;
+  }
+  .summits a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transform: translate(-6px, -100%);
+    padding: 4px 6px 4px 0;
+    text-decoration: none;
+    color: var(--ink);
+    font: 600 0.6875rem/1 var(--font-sign);
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow: 0 0 2px var(--paper), 0 0 6px var(--paper), 0 0 10px var(--paper);
+    transition: color 160ms var(--ease-out);
+  }
+  .summits svg { flex: none; fill: var(--ink); translate: 0 1px; }
+  .summits li:not([data-featured]) a { font-weight: 500; color: var(--ink-2); }
+  .summits li:not([data-featured]) svg { scale: 0.8; fill: var(--ink-2); }
+  .summits li[data-featured] a { font-size: 0.75rem; }
+  .summits li[data-flip] a { flex-direction: row-reverse; transform: translate(calc(-100% + 6px), -100%); padding: 4px 0 4px 6px; }
+  .summits li[data-active] a { color: var(--alpine); }
+  .summits li[data-active] svg { fill: var(--alpine); }
+  .summits a:hover { color: var(--alpine); }
+  .summits a:hover svg { fill: var(--alpine); }
+  @media (max-width: 639px) {
+    .summits li:not([data-featured]) { display: none; }
+    .summits a { font-size: 0.625rem; }
+    .summits li[data-featured] a { font-size: 0.6875rem; }
+  }
+
+  .range {
+    position: absolute;
+    left: 0;
+    top: 0;
+    translate: -9999px 0;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    font: 300 clamp(1.1rem, 0.6rem + 2.2vw, 2.4rem)/1 var(--font-sign);
+    letter-spacing: 0.58em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--ink);
+    text-shadow: 0 0 3px var(--paper), 0 0 10px var(--paper);
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-out);
+  }
+
+</style>

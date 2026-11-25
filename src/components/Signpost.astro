@@ -1,0 +1,44 @@
+---
+/** A Wanderweg signpost. The top plate names where you stand; the arrows are the way on. */
+interface Plate { label: string; meta: string; href: string }
+interface Props { here: string; elevation: string; plates: Plate[] }
+const { here, elevation, plates } = Astro.props;
+---
+<nav class="post" aria-label="Signpost">
+  <p class="here"><span>{here}</span><span class="num">{elevation}</span></p>
+  <ul role="list">
+    {plates.map((p) => (
+      <li>
+        <a href={p.href} class="plate">
+          <span class="to">{p.label}</span>
+          <span class="meta">{p.meta}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+<style>
+  .post { position: relative; display: grid; gap: 6px; width: min(100%, 22rem); padding-left: 10px; }
+  .post::before { content: ""; position: absolute; left: 0; top: -6px; bottom: -14px; width: 5px; border-radius: 3px; background: linear-gradient(90deg, #8f9499, #c7ccd0 45%, #7d8287); }
+  ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .here {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    padding: 8px 12px; background: #fff; color: #141414; border: 1px solid #c9c7bd; border-radius: 2px;
+    font: 600 var(--t-md)/1 var(--font-sign); box-shadow: var(--shadow);
+  }
+  .here .num { font-weight: 400; font-size: var(--t-sm); }
+  .plate {
+    --tip: 18px;
+    position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+    padding: 11px calc(var(--tip) + 10px) 11px 12px;
+    background: var(--sign); color: var(--sign-ink);
+    clip-path: polygon(0 0, calc(100% - var(--tip)) 0, 100% 50%, calc(100% - var(--tip)) 100%, 0 100%);
+    text-decoration: none; font: 600 var(--t-md)/1 var(--font-sign);
+    transition: translate 260ms var(--ease-out), background-color 160ms var(--ease-out);
+    filter: drop-shadow(0 1px 0 var(--sign-edge));
+  }
+  .plate .meta { font-weight: 400; font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+  .plate:hover { translate: 6px 0; background: #ffd21a; }
+  .plate:focus-visible { outline: none; translate: 6px 0; box-shadow: inset 0 0 0 2px var(--sign-ink); }
+  @media (prefers-reduced-motion: reduce) { .plate:hover, .plate:focus-visible { translate: 0 0; } }
+</style>

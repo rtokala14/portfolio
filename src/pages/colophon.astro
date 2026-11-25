@@ -1,0 +1,30 @@
+---
+import Base from "../layouts/Base.astro";
+import SheetHeader from "../components/SheetHeader.astro";
+import SheetFooter from "../components/SheetFooter.astro";
+---
+<Base title="How this is made" description="The mountain on this site is real: Jebel Jais, drawn from open elevation data by a few hundred lines of WebGL, in the style of Swiss national maps.">
+  <SheetHeader sheet="Colophon" />
+  <main id="main" class="wrap">
+    <article class="col page">
+      <h1>How this is made</h1>
+      <div class="prose">
+        <p>The mountain is real. It's the Jebel Jais massif in Ras Al Khaimah, the highest ground in the country and where I hike. Its elevations come from open satellite data. A small script fills the pits, traces where water would run, and bakes the heights and the wadis into two files of about a megabyte together.</p>
+        <p>Everything else is drawn in your browser, every frame, by one WebGL shader: the colours that rise with altitude, the shading in the manner of Eduard Imhof's Swiss maps (warm in the light, blue in the shade), contours that thin out as you zoom out, and the cut sides of the block when you lift it. Nothing on the map is an image.</p>
+        <p>Flat, the sheet is lit from the north-west, as maps always are, because light from the south makes valleys read as ridges. Lift it into 3D and it takes the real position of the sun over Dubai at that minute.</p>
+        <p>The summits are real peaks on the sheet. Each one is a project, and the biggest one gets the highest peak.</p>
+        <h2>The rest</h2>
+        <p>Static pages built with Astro and TypeScript, no framework on the client. Trip reports are MDX files in the repository; their charts and agent traces are small web components. Pages hand over to each other with view transitions and start loading before you click. Fonts are Signika, designed for wayfinding signs, and Literata, designed for reading on screens.</p>
+        <p>There are a few things on the sheet nobody is told about. The source has hints.</p>
+      </div>
+    </article>
+  </main>
+  <SheetFooter />
+</Base>
+<style>
+  .page { max-width: 44rem; padding-top: 36px; }
+  h1 { font: 600 var(--t-2xl)/1.02 var(--font-read); letter-spacing: -0.025em; }
+  .prose { margin-top: 24px; font: 400 1.125rem/1.75 var(--font-read); max-width: var(--measure); }
+  .prose p + p { margin-top: 1.1em; }
+  .prose h2 { font: 600 var(--t-xl)/1.15 var(--font-read); margin: 1.8em 0 0.6em; }
+</style>

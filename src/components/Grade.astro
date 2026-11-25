@@ -1,0 +1,26 @@
+---
+/**
+ * SAC hiking scale, marked the way Swiss trails are:
+ * T1–T2 yellow (hiking), T3–T4 white-red-white (mountain), T5–T6 white-blue-white (alpine).
+ */
+interface Props { grade: string; label?: boolean }
+const { grade, label = true } = Astro.props;
+const n = Number(grade.slice(1));
+const kind = n <= 2 ? "hike" : n <= 4 ? "mountain" : "alpine";
+const title = { hike: "Hiking trail", mountain: "Mountain trail", alpine: "Alpine route" }[kind];
+---
+<span class="grade" data-kind={kind} title={`${title}, SAC ${grade}`}>
+  <svg viewBox="0 0 18 12" width="18" height="12" aria-hidden="true">
+    {kind === "hike" ? <path d="M9 1 17 6 9 11 1 6Z" class="y" /> : <><rect x="0.5" y="0.5" width="17" height="11" class="w" /><rect x="0.5" y="4" width="17" height="4" class="c" /></>}
+  </svg>
+  {label && <span>{grade}</span>}
+  <span class="sr-only">{title}</span>
+</span>
+<style>
+  .grade { display: inline-flex; align-items: center; gap: 6px; font: 600 var(--t-xs)/1 var(--font-sign); letter-spacing: 0.04em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  svg { flex: none; }
+  .y { fill: var(--sign); stroke: var(--sign-edge); stroke-width: 1; }
+  .w { fill: #fff; stroke: color-mix(in oklab, var(--ink) 35%, transparent); stroke-width: 1; }
+  [data-kind="mountain"] .c { fill: #d52b1e; }
+  [data-kind="alpine"] .c { fill: #1f6fc0; }
+</style>
